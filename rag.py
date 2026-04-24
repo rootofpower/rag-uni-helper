@@ -20,12 +20,13 @@ documents = load_and_chunk("Documents/info.txt")
 
 if collection.count() == 0:
     collection.add(
-        ids= [str(i) for i in range(len(documents))],
+        ids=[str(i) for i in range(len(documents))],
         documents=documents,
     )
 
 
 knowledge_base = model.encode(documents)
+
 
 def get_answer(query):
     query_vector = model.encode(query)
@@ -33,9 +34,7 @@ def get_answer(query):
     context = cosine_similarity(query_vector, knowledge_base)
 
     prompt = f"""Answer the question based ONLY on the context below.
-            
-    Context: {documents[context.argmax()]} 
-    
+    Context: {documents[context.argmax()]}
     Query: {query}
 """
 
@@ -46,9 +45,10 @@ def get_answer(query):
 
     return response.text
 
-#
+
 # print(get_answer("What is used for containerization?"))
 # print(get_answer("What is machine learning?"))
+
 
 def get_answer_from_collection(query):
     answer = collection.query(

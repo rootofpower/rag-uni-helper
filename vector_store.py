@@ -8,7 +8,7 @@ collection = client.get_or_create_collection(name="documents")
 documents = load_and_chunk("./Documents/info.txt")
 
 collection.add(
-    ids= [str(i) for i in range(len(documents))],
+    ids=[str(i) for i in range(len(documents))],
     documents=documents,
 )
 
