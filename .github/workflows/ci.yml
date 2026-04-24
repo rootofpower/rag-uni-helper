@@ -1,0 +1,28 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+#step 1: checkout code
+#step 2: install python
+#step 3: install dependencies
+#step 4: execute flake8
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: 'pip' #caching pip dependencies
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint check
+        uses: py-actions/flake8@v2
+
+
