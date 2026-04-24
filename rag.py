@@ -58,7 +58,6 @@ def get_answer_from_collection(query):
     context = answer["documents"]
     prompt = f"""Answer the question based ONLY on the context below.
     Context: {context}
-    
     Query: {query}
 """
     response = client.models.generate_content(
