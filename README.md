@@ -19,6 +19,10 @@ tech stack:
 - Gemini API — answer generation  
 - FastAPI — REST API
 
+Before run, create .env file in root directory:
+```
+GEMINI_API_KEY=your_key_here
+```
 
 How to run:
 ```
