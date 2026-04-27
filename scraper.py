@@ -8,11 +8,14 @@ def scrape(url: str) -> str:
     for tag in soup(["script", "style", "header", "nav", "footer"]):
         tag.decompose()
     content = soup.find("div", {"id": "mw-content-text"})
+    if content is None:
+        content = soup.find("main")
+        if content is None:
+            content = soup.find("body")
     if content is not None:
         return content.text
     else:
         return None
-
 
 def scrape_links(url: str) -> set:
     r = requests.get(url, headers={'user-agent': 'my-app/0.0.1'})

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-
-from rag import get_answer_from_collection
+from pydantic import BaseModel
+from rag import get_answer_from_collection, crawl_and_add
 from rag import add_source
 app = FastAPI()
 
@@ -18,3 +18,12 @@ def ask(query: str):
 @app.post("/add")
 def add(source: str):
     return add_source(source)
+
+class CrawlRequest(BaseModel):
+    start_urls: list[str]
+    lang_prefix: str | None
+
+
+@app.post("/crawl")
+def crawl(request: CrawlRequest):
+    return crawl_and_add(request.start_urls, request.lang_prefix)

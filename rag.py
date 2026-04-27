@@ -5,6 +5,7 @@ from google import genai
 from dotenv import load_dotenv
 import chromadb
 from chunker import chunk_text
+from crawler import crawl
 # from chunker import load_and_chunk
 # from crawler import crawl
 from scraper import scrape
@@ -85,6 +86,8 @@ def add_source(url: str):
         print(f"Source {url} already exists")
         return {"status": "already_exists"}
     text = scrape(url)
+    if not text:
+        return {"status": "skipped"}
     chunks = chunk_text(text)
     collection.add(
         ids=[f"{url}_{i}" for i in range(len(chunks))],
@@ -98,5 +101,17 @@ def add_source(url: str):
 # add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
 # print("Second try")
 # add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
+print(collection.count())
 
-# print(collection.peek())
+def crawl_and_add(start_urls:list, lang_prefix=None):
+    links = crawl(start_urls=start_urls, lang_prefix=lang_prefix)
+    errors = []
+    for link in links:
+        try:
+            add_source(link)
+        except Exception as e:
+            print(f"ERROR IN add_source: {e}")
+            errors.append({"url": link, "error": str(e)})
+    return {"status": "success", "added": len(links), "errors": errors}
+
+# chroma_client.delete_collection(name="documents")

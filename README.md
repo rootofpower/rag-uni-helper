@@ -29,3 +29,6 @@ How to run:
     pip install -r requirements.txt
     uvicorn api:app --reload
 ```
+
+### 27.04
+implemented a crawler & scrapper mechanisms, for collecting all important url and scrapping it
