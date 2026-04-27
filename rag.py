@@ -1,12 +1,12 @@
 import os
-
 from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
+# from sklearn.metrics.pairwise import cosine_similarity
 from google import genai
 from dotenv import load_dotenv
 import chromadb
-from chunker import load_and_chunk, chunk_text
-from crawler import crawl
+from chunker import chunk_text\
+# from chunker import load_and_chunk
+# from crawler import crawl
 from scraper import scrape
 
 load_dotenv()
