@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 from google import genai
 from dotenv import load_dotenv
 import chromadb
-from chunker import chunk_text\
+from chunker import chunk_text
 # from chunker import load_and_chunk
 # from crawler import crawl
 from scraper import scrape
@@ -58,7 +58,7 @@ def get_answer_from_collection(query):
         include=["documents", "metadatas"],
     )
     context = answer["documents"]
-    source = set(_["source"]  for _ in answer["metadatas"][0] if _ is not None)
+    source = set(_["source"] for _ in answer["metadatas"][0] if _ is not None)
     print(source)
     prompt = f"""Answer the question based ONLY on the context below.
     Context: {context}
@@ -90,7 +90,7 @@ def add_source(url: str):
         ids=[f"{url}_{i}" for i in range(len(chunks))],
         documents=chunks,
         metadatas=[
-            {"source": url } for _ in range(len(chunks))
+            {"source": url} for _ in range(len(chunks))
         ])
     return {"status": "success"}
 
@@ -100,4 +100,3 @@ def add_source(url: str):
 # add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
 
 # print(collection.peek())
-
