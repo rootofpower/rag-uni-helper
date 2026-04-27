@@ -5,3 +5,5 @@ python-dotenv
 chromadb
 fastapi
 uvicorn
+beautifulsoup4
+requests
