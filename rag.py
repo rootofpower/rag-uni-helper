@@ -6,6 +6,7 @@ from google import genai
 from dotenv import load_dotenv
 import chromadb
 from chunker import load_and_chunk, chunk_text
+from crawler import crawl
 from scraper import scrape
 
 load_dotenv()
@@ -99,3 +100,4 @@ def add_source(url: str):
 # add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
 
 # print(collection.peek())
+
