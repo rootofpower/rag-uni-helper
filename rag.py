@@ -103,7 +103,8 @@ def add_source(url: str):
 # add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
 print(collection.count())
 
-def crawl_and_add(start_urls:list, lang_prefix=None):
+
+def crawl_and_add(start_urls: list, lang_prefix=None):
     links = crawl(start_urls=start_urls, lang_prefix=lang_prefix)
     errors = []
     for link in links:

@@ -17,6 +17,9 @@ def crawl(start_urls: list, max_pages=50, lang_prefix=None):
             for link in links:
                 link = urljoin(url, link)
                 link = link.split("#")[0]
-                if any(link.startswith(root) for root in start_urls) and link not in visited_urls and (lang_prefix is None or lang_prefix in link):
+                if (any(link.startswith(root) for root in start_urls)
+                        and link not in visited_urls
+                        and (lang_prefix is None
+                             or lang_prefix in link)):
                     visit_queue.append(link)
     return visited_urls

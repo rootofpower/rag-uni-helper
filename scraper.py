@@ -17,6 +17,7 @@ def scrape(url: str) -> str:
     else:
         return None
 
+
 def scrape_links(url: str) -> set:
     r = requests.get(url, headers={'user-agent': 'my-app/0.0.1'})
     soup = BeautifulSoup(r.text, 'html.parser')

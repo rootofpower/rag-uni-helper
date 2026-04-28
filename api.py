@@ -19,6 +19,7 @@ def ask(query: str):
 def add(source: str):
     return add_source(source)
 
+
 class CrawlRequest(BaseModel):
     start_urls: list[str]
     lang_prefix: str | None
