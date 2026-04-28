@@ -16,15 +16,21 @@ def ask(query: str):
 
 
 @app.post("/add")
-def add(source: str):
-    return add_source(source)
+async def add(source: str):
+    return await add_source(source)
 
 
 class CrawlRequest(BaseModel):
     start_urls: list[str]
+    max_pages: int
     lang_prefix: str | None
+    batch_size: int
 
 
 @app.post("/crawl")
-def crawl(request: CrawlRequest):
-    return crawl_and_add(request.start_urls, request.lang_prefix)
+async def crawl(request: CrawlRequest):
+    return await crawl_and_add(request.start_urls, request.max_pages, request.lang_prefix, request.batch_size)
+
+
+# @app.post("/clear_source")
+# async def clear_source(request: CrawlRequest):
