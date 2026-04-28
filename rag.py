@@ -106,12 +106,24 @@ async def add_source(url: str, crawler: AsyncWebCrawler):
 # add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
 
 
-async def crawl_and_add(start_urls: list,max_pages=50, lang_prefix=None, batch_size=5):
+async def crawl_and_add(start_urls: list,
+                        max_pages=50,
+                        lang_prefix=None,
+                        batch_size=5):
     browser_cfg = BrowserConfig(headless=True)
     async with AsyncWebCrawler(config=browser_cfg) as crawler:
-        links = await crawl(start_urls=start_urls,crawler=crawler, max_pages=max_pages, lang_prefix=lang_prefix, batch_size=batch_size)
+        links = await crawl(
+            start_urls=start_urls,
+            crawler=crawler,
+            max_pages=max_pages,
+            lang_prefix=lang_prefix,
+            batch_size=batch_size
+        )
         errors = []
-        results = await asyncio.gather(*[add_source(url, crawler) for url in links], return_exceptions=True)
+        results = await asyncio.gather(
+            *[add_source(url, crawler) for url in links],
+            return_exceptions=True
+        )
         for link, result in zip(links, results):
             if isinstance(result, Exception):
                 errors.append({"url": link, "result": str(result)})
@@ -119,13 +131,3 @@ async def crawl_and_add(start_urls: list,max_pages=50, lang_prefix=None, batch_s
 
 # chroma_client.delete_collection(name="documents")
 # print(collection.count())
-
-def clear_collection(name: str):
-    coll = chroma_client.get_collection(name=name)
-    coll.delete()
-    return {"status": "success"}
-
-
-def create_collection(name: str):
-    coll = chroma_client.get_or_create_collection(name=name)
-    return {"status": "success"}

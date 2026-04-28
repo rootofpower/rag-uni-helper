@@ -1,6 +1,6 @@
 # import requests
 # from bs4 import BeautifulSoup
-from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, CacheMode
+from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
 
 # def scrape(url: str) -> str:
 #     r = requests.get(url, headers={'user-agent': 'my-app/0.0.1'})
@@ -62,5 +62,3 @@ async def scrape_links(url: str, crawler: AsyncWebCrawler) -> set:
     else:
         print("Error while scraping")
         return None
-
-

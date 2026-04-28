@@ -29,8 +29,12 @@ class CrawlRequest(BaseModel):
 
 @app.post("/crawl")
 async def crawl(request: CrawlRequest):
-    return await crawl_and_add(request.start_urls, request.max_pages, request.lang_prefix, request.batch_size)
-
+    return await crawl_and_add(
+        request.start_urls,
+        request.max_pages,
+        request.lang_prefix,
+        request.batch_size
+    )
 
 # @app.post("/clear_source")
 # async def clear_source(request: CrawlRequest):
