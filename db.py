@@ -31,11 +31,16 @@ def clear_collection(collection_name: str) -> dict:
             }
 
 
-def query_collection(collection_name: str, query: str) -> tuple:
+def query_collection(
+        collection_name: str,
+        query: str,
+        n_results: int = 5,
+) -> tuple:
     collection = client.get_collection(collection_name)
     answer = collection.query(
         query_texts=query,
         include=["documents", "metadatas"],
+        n_results=n_results,
     )
     context = answer["documents"]
     source = set(_["source"] for _ in answer["metadatas"][0] if _ is not None)

@@ -70,11 +70,13 @@ async def crawl_and_add(
 
 def get_answer_from_collection(
     collection_name: str,
-    query: str
+    query: str,
+    n_results: int
 ) -> dict:
     (context, source) = query_collection(
         collection_name=collection_name,
-        query=query
+        query=query,
+        n_results=n_results,
         )
 
     answer = generate_answer(

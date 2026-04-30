@@ -18,8 +18,8 @@ async def root():
 
 
 @app.get("/ask")
-async def ask(collection_name: str, query: str):
-    return get_answer_from_collection(collection_name, query)
+async def ask(collection_name: str, query: str, n_results: int):
+    return get_answer_from_collection(collection_name, query, n_results)
 
 
 class CrawlRequest(BaseModel):

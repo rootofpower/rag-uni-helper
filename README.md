@@ -32,3 +32,6 @@ How to run:
 
 ### 27.04
 implemented a crawler & scrapper mechanisms, for collecting all important url and scrapping it
+
+### 30.04
+refactored code, created new endpoints for manipulating db, moved to crawl4ai from BeautifulSoup
