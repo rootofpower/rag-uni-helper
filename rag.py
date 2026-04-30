@@ -1,87 +1,22 @@
 import asyncio
-import os
-
 from crawl4ai import AsyncWebCrawler, BrowserConfig
-# from sentence_transformers import SentenceTransformer
-# from sklearn.metrics.pairwise import cosine_similarity
-from google import genai
-from dotenv import load_dotenv
-import chromadb
 from chunker import chunk_text
 from crawler import crawl
-# from chunker import load_and_chunk
-# from crawler import crawl
+from db import add_documents, get_documents, query_collection
+from llm import generate_answer
 from scraper import scrape
 
-load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise Exception("GEMINI_API_KEY not set")
-client = genai.Client(api_key=GEMINI_API_KEY)
-# model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-chroma_client = chromadb.PersistentClient(path="chromadbdata")
-collection = chroma_client.get_or_create_collection(name="documents")
-# documents = load_and_chunk("Documents/info.txt")
-
-# if collection.count() == 0:
-#     collection.add(
-#         ids=[str(i) for i in range(len(documents))],
-#         documents=documents,
-#     )
-#
-#
-# knowledge_base = model.encode(documents)
-#
-#
-# def get_answer(query):
-#     query_vector = model.encode(query)
-#     query_vector = query_vector.reshape(1, -1)
-#     context = cosine_similarity(query_vector, knowledge_base)
-#
-#     prompt = f"""Answer the question based ONLY on the context below.
-#     Context: {documents[context.argmax()]}
-#     Query: {query}
-# """
-#
-#     response = client.models.generate_content(
-#         model='gemini-3.1-flash-lite-preview',
-#         contents=prompt,
-#     )
-#
-#     return response.text
-
-
-# print(get_answer("What is used for containerization?"))
-# print(get_answer("What is machine learning?"))
-
-
-def get_answer_from_collection(query):
-    answer = collection.query(
-        query_texts=query,
-        include=["documents", "metadatas"],
-    )
-    context = answer["documents"]
-    source = set(_["source"] for _ in answer["metadatas"][0] if _ is not None)
-    print(source)
-    prompt = f"""Answer the question based ONLY on the context below.
-    Context: {context}
-    Query: {query}
-"""
-    response = client.models.generate_content(
-        model='gemini-3.1-flash-lite-preview',
-        contents=prompt,
-    )
-    return {"answer": response.text, "sources": source}
-
-
-# print(get_answer_from_collection("What is used for containerization?"))
-# print(get_answer_from_collection("What is machine learning?"))
-
-
-async def add_source(url: str, crawler: AsyncWebCrawler):
+async def add_source(
+        url: str,
+        crawler: AsyncWebCrawler,
+        collection_name: str
+) -> dict:
     try:
-        existing = collection.get(where={"source": url})
+        existing = get_documents(
+            collection_name=collection_name,
+            where={"source": url}
+        )
     except Exception as e:
         print(f"ERROR IN add_source: {e}")
         return {"status": "error"}
@@ -92,24 +27,20 @@ async def add_source(url: str, crawler: AsyncWebCrawler):
     if not text:
         return {"status": "skipped"}
     chunks = chunk_text(text)
-    collection.add(
-        ids=[f"{url}_{i}" for i in range(len(chunks))],
-        documents=chunks,
-        metadatas=[
-            {"source": url} for _ in range(len(chunks))
-        ])
+    add_documents(collection_name=collection_name,
+                  ids=[f"{url}_{i}" for i in range(len(chunks))],
+                  documents=chunks,
+                  metadatas=[{"source": url} for _ in range(len(chunks))
+    ])
     return {"status": "success"}
-
-# print("First try")
-# add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
-# print("Second try")
-# add_source("https://en.wikipedia.org/wiki/Python_(programming_language)")
 
 
 async def crawl_and_add(start_urls: list,
+                        collection_name: str,
                         max_pages=50,
                         lang_prefix=None,
-                        batch_size=5):
+                        batch_size=5,
+) -> dict:
     browser_cfg = BrowserConfig(headless=True)
     async with AsyncWebCrawler(config=browser_cfg) as crawler:
         links = await crawl(
@@ -121,7 +52,12 @@ async def crawl_and_add(start_urls: list,
         )
         errors = []
         results = await asyncio.gather(
-            *[add_source(url, crawler) for url in links],
+            *[add_source(
+                url=url,
+                crawler=crawler,
+                collection_name=collection_name
+            )
+                for url in links],
             return_exceptions=True
         )
         for link, result in zip(links, results):
@@ -129,5 +65,31 @@ async def crawl_and_add(start_urls: list,
                 errors.append({"url": link, "result": str(result)})
     return {"status": "success", "added": len(links), "errors": errors}
 
-# chroma_client.delete_collection(name="documents")
-# print(collection.count())
+
+def get_answer_from_collection(
+        collection_name: str,
+        query: str
+) -> dict:
+    (context, source) = query_collection(
+        collection_name=collection_name,
+        query=query
+        )
+
+    answer = generate_answer(
+        query=query,
+        context=context
+    )
+    return {"answer": answer, "source": source}
+
+
+async def add_source_from_url(
+        url:str,
+        collection_name: str
+) -> dict:
+    browser_cfg = BrowserConfig(headless=True)
+    async with AsyncWebCrawler(config=browser_cfg) as crawler:
+        return await add_source(
+            url=url,
+            crawler=crawler,
+            collection_name=collection_name
+        )
