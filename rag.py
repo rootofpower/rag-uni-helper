@@ -8,9 +8,9 @@ from scraper import scrape
 
 
 async def add_source(
-        url: str,
-        crawler: AsyncWebCrawler,
-        collection_name: str
+    url: str,
+    crawler: AsyncWebCrawler,
+    collection_name: str
 ) -> dict:
     try:
         existing = get_documents(
@@ -31,15 +31,17 @@ async def add_source(
                   ids=[f"{url}_{i}" for i in range(len(chunks))],
                   documents=chunks,
                   metadatas=[{"source": url} for _ in range(len(chunks))
-    ])
+                  ]
+    )
     return {"status": "success"}
 
 
-async def crawl_and_add(start_urls: list,
-                        collection_name: str,
-                        max_pages=50,
-                        lang_prefix=None,
-                        batch_size=5,
+async def crawl_and_add(
+    start_urls: list,
+    collection_name: str,
+    max_pages=50,
+    lang_prefix=None,
+    batch_size=5,
 ) -> dict:
     browser_cfg = BrowserConfig(headless=True)
     async with AsyncWebCrawler(config=browser_cfg) as crawler:
@@ -67,8 +69,8 @@ async def crawl_and_add(start_urls: list,
 
 
 def get_answer_from_collection(
-        collection_name: str,
-        query: str
+    collection_name: str,
+    query: str
 ) -> dict:
     (context, source) = query_collection(
         collection_name=collection_name,
@@ -83,8 +85,8 @@ def get_answer_from_collection(
 
 
 async def add_source_from_url(
-        url:str,
-        collection_name: str
+    url: str,
+    collection_name: str
 ) -> dict:
     browser_cfg = BrowserConfig(headless=True)
     async with AsyncWebCrawler(config=browser_cfg) as crawler:

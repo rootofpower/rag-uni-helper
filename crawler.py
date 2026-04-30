@@ -22,14 +22,12 @@ async def crawl(
         batch = visit_queue[:batch_size]
         visit_queue = visit_queue[batch_size:]
         batch = [url for url in batch if url not in visited_urls]
-        print(f"Batch size after filter: {len(batch)}")
         visited_urls.update(batch)
         results = await asyncio.gather(
             *[scrape_links(url=url, crawler=crawler)
               for url in batch]
         )
         for url, links in zip(batch, results):
-            print(f"Visiting: {url} ({len(visit_queue)}/{max_pages})")
             for link in (links if links is not None else []):
                 link = link.split("#")[0]
                 if (any(link.startswith(root) for root in start_urls)

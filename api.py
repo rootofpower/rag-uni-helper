@@ -1,8 +1,14 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from db import create_collection, clear_collection, delete_collection, list_collection, documents_count
-from rag import get_answer_from_collection, crawl_and_add, add_source_from_url
+from db import (create_collection,
+                clear_collection,
+                delete_collection,
+                list_collection,
+                documents_count)
+from rag import (get_answer_from_collection,
+                 crawl_and_add,
+                 add_source_from_url)
 app = FastAPI()
 
 
@@ -16,11 +22,6 @@ async def ask(collection_name: str, query: str):
     return get_answer_from_collection(collection_name, query)
 
 
-@app.post("/add")
-async def add(source: str, collection_name: str):
-    return await add_source_from_url(url=source, collection_name=collection_name)
-
-
 class CrawlRequest(BaseModel):
     start_urls: list[str]
     collection_name: str
@@ -29,7 +30,7 @@ class CrawlRequest(BaseModel):
     batch_size: int
 
 
-@app.post("/crawl")
+@app.post("/crawl_and_add")
 async def crawl(request: CrawlRequest):
     return await crawl_and_add(
         request.start_urls,
@@ -43,6 +44,11 @@ async def crawl(request: CrawlRequest):
 @app.post("/collection/create")
 async def create_coll(collection_name: str):
     return create_collection(collection_name)
+
+
+@app.post("/collection/add_source")
+async def add_source(source: str, collection_name: str):
+    return await add_source_from_url(url=source, collection_name=collection_name)
 
 
 @app.post("/collection/clear")
