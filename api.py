@@ -48,7 +48,10 @@ async def create_coll(collection_name: str):
 
 @app.post("/collection/add_source")
 async def add_source(source: str, collection_name: str):
-    return await add_source_from_url(url=source, collection_name=collection_name)
+    return await add_source_from_url(
+        url=source,
+        collection_name=collection_name
+    )
 
 
 @app.post("/collection/clear")

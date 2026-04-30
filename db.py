@@ -56,7 +56,8 @@ def add_documents(
         metadatas=metadatas,
     )
     return {"status": "success",
-            "message": f"Document(s) added to collection {collection_name} successfully"
+            "message": f"Document(s) added to"
+                       f" collection {collection_name} successfully"
             }
 
 

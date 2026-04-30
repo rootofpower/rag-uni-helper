@@ -30,8 +30,7 @@ async def add_source(
     add_documents(collection_name=collection_name,
                   ids=[f"{url}_{i}" for i in range(len(chunks))],
                   documents=chunks,
-                  metadatas=[{"source": url} for _ in range(len(chunks))
-                  ]
+                  metadatas=[{"source": url} for _ in range(len(chunks))],
     )
     return {"status": "success"}
 
