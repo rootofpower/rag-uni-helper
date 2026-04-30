@@ -27,10 +27,11 @@ async def add_source(
     if not text:
         return {"status": "skipped"}
     chunks = chunk_text(text)
-    add_documents(collection_name=collection_name,
-                  ids=[f"{url}_{i}" for i in range(len(chunks))],
-                  documents=chunks,
-                  metadatas=[{"source": url} for _ in range(len(chunks))],
+    add_documents(
+        collection_name=collection_name,
+        ids=[f"{url}_{i}" for i in range(len(chunks))],
+        documents=chunks,
+        metadatas=[{"source": url} for _ in range(len(chunks))],
     )
     return {"status": "success"}
 
